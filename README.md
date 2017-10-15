@@ -44,20 +44,32 @@ questteosinte <- replace(orderedteosinte, is.na(orderedteosinte), "?")
 
 hyphteosinte <- replace(orderedteosinte, is.na(orderedteosinte), "-")
 
-hyphmaize$Chromosome <- as.numeric(as.character(hyphmaize$Chromosome))
-arrangedhyphmaize <- arrange(hyphmaize, desc(Chromosome))
-arrangedhyphmaize$Chromosome <- as.character(as.numeric(arrangedhyphmaize$Chromosome))
+hyphmaize$Position <- as.numeric(as.character(hyphmaize$Position))
+arrangedhyphmaize <- arrange(hyphmaize, desc(Position))
+arrangedhyphmaize$Position <- as.character(as.numeric(arrangedhyphmaize$Position))
 
-questmaize$Chromosome <- as.numeric(as.character(questmaize$Chromosome))
-arrangedquestmaize <- arrange(questmaize, Chromosome)
-arrangedquestmaize$Chromosome <- as.character(as.numeric(arrangedquestmaize$Chromosome))
+questmaize$Position <- as.numeric(as.character(questmaize$Position))
+arrangedquestmaize <- arrange(questmaize, Position)
+arrangedquestmaize$Position <- as.character(as.numeric(arrangedquestmaize$Position))
 
-questteosinte$Chromosome <- as.numeric(as.character(questteosinte$Chromosome))
-arrangedquestteosinte <- arrange(questteosinte, Chromosome)
-arrangedquestteosinte$Chromosome <-as.character(as.numeric(arrangedquestteosinte$Chromosome))
+questteosinte$Position <- as.numeric(as.character(questteosinte$Position))
+arrangedquestteosinte <- arrange(questteosinte, Position)
+arrangedquestteosinte$Position <- as.character(as.numeric(arrangedquestteosinte$Position))
 
-hyphteosinte$Chromosome <- as.numeric(as.character(hyphteosinte$Chromosome))
-arrangedhyphteosinte <- arrange(hyphteosinte, desc(Chromosome))
-arrangedhyphteosinte$Chromosome <- as.character(as.numeric(arrangedhyphteosinte$Chromosome))
+hyphteosinte$Position <- as.numeric(as.character(hyphteosinte$Position))
+arrangedhyphteosinte <- arrange(hyphteosinte, desc(Position))
+arrangedhyphteosinte$Position <- as.character(as.numeric(arrangedhyphteosinte$Position))
+
+Split_maizequest <- split(arrangedquestmaize, arrangedquestmaize$Chromosome)
+lapply(names(Split_maizequest), function(x){write.table(Split_maizequest[[x]], file=paste("maizequestchrom",x), sep = "\t", row.names = FALSE)})
+
+Split_teosintequest <- split(arrangedquestteosinte, arrangedquestteosinte$Chromosome)
+lapply(names(Split_teosintequest), function(x){write.table(Split_teosintequest[[x]], file=paste("teosintequestchrom",x), sep = "\t", row.names = FALSE)})
+
+Split_maizehyph <- split(arrangedhyphmaize, arrangedhyphmaize$Chromosome)
+lapply(names(Split_maizehyph), function(x){write.table(Split_maizehyph[[x]], file=paste("maizehyphtchrom",x), sep = "\t", row.names = FALSE)})
+
+Split_teosintehyph <- split(arrangedhyphteosinte, arrangedhyphteosinte$Chromosome)
+lapply(names(Split_teosintehyph), function(x){write.table(Split_teosintehyph[[x]], file=paste("teosintehyphchrom",x), sep = "\t", row.names = FALSE)})
 
 
