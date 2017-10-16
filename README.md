@@ -117,8 +117,68 @@ qtmelt_Chrome <-as.data.frame(table(melt_teosinte$Chromosome))
 ggplot(qtmelt_Chrome, aes(x = Var1, y = Freq)) + geom_bar(stat = "identity")
 ###I didn't use this command because I was not 100% sure what melt was doing. I just stuck with what was above.
 
+###to get the heterozygosity data, I started with a fresh set of fang and SNP files
+fangnew <- read.table("https://raw.githubusercontent.com/EEOB-BioData/BCB546X-Fall2017/master/UNIX_Assignment/fang_et_al_genotypes.txt", sep = "\t", header = TRUE, stringsAsFactors = FALSE)
 
-### I also did not complete the "missing data and hetereozyogsity amount" part, Sorry
+###these new commands are similar to the ones above, but I have removed the argument to change all of the "?/?" to NA, because I was having some trouble with the if/else loop below. I had to keep them as characters.
+
+SNPnew <- read.table("https://raw.githubusercontent.com/EEOB-BioData/BCB546X-Fall2017/master/UNIX_Assignment/snp_position.txt", sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+
+
+###I then removed the 2nd column, as it isnt necessary, and may mess up the melt later on. not sure if it did, just didn't want anything between the columns I was melting.
+fangplot <- fangnew[, -2] 
+
+
+###I melted correctly this time. this command takes a wide list and makes it long. In this case, we are taking the nucleotides and putting them longways, pared with the chromosome they belong too.
+fangmelt <- melt(fangplot, id= c("Sample_ID", "Group")) 
+
+
+###changed the column names for merging later
+colnames(fangmelt)[c(3,4)] <- c("SNP_ID", "Nucleotides")
+
+
+###pulled out only necessary data
+snpplot <- SNPnew[, c(1,3,4)] 
+
+
+###removed unknowns and multiples
+snpplot[snpplot == "unknown"| snpplot == "multiple"] <- NA
+
+
+###changed the chromosome column to numeric
+snpplot$Chromosome <- as.numeric(as.character(snp_rel$Chromosome))
+
+
+###changed the position column to numeric
+snpplot$Position <- as.numeric(as.character(snp_rel$Position))
+
+
+###merged the new SNP and fang files by SNP_ID column
+fangplot2 <- merge(snpplot, fangmelt, by="SNP_ID")
+
+
+###wrote an if else function targeting heterozygosity. found this online and tweaked it just a bit. 
+is.same <- function(x) {if (x=="C/C" | x=="A/A"|x=="T/T" |x=="G/G") {return("same.")} else if (x =="?/?") {return(NA)} else {return("diff.")}}
+
+
+###used lapply to apply my new function to the values within the nucleotides column. essentially it looks for the values above as it travels down the column and returns different values when criteria has been matched in a new column.
+fangplot2$Heterozygosity <- lapply(fangplot2$Nucleotides, is.same)
+
+
+
+###changed the new column to characters so it would work with filter command
+fangplot2$Heterozygosity <- as.character(fangplot2$Heterozygosity)
+
+
+### pulled out only maize and teosinte data and put it in a new vector.
+mtfangplot <- filter(fangplot2, Group == "ZMMIL" | Group == "ZMMLR" | Group == "ZMMMR" | Group == "ZMPBA" | Group == "ZMPIL" | Group == "ZMPJA")
+
+
+###plotted the new vector based on group column. had to change to characters so ggplot would work. counted the number of times each of the different designations were present in the heterozygosity column. the dodge argument puts all of the groups side-by-side.
+mtfangplot$Group <- as.character(mtfangplot$Group)
+ggplot(mtfangplot, aes(Heterozygosity, ..count..))+geom_bar(aes(fill=Group), position= "dodge")
+
+
 
 ###I then made a new plot that shows which snps are present in which chromosome
 qt_SNP <-as.data.frame(table(questteosinte$SNP_ID, questteosinte$Chromosome))
