@@ -1,0 +1,25 @@
+---
+title: "Review"
+author: "Finn"
+date: "October 18, 2017"
+output: html_document
+---
+
+# Lucas Koester's code review
+
+## Part 1
+
+The file haven't been inspected.
+
+When reordering the merged files, we get a warning message. This is because some SNP positions are on "multiple" chromosomes. This will apply 4 times. This can be removed with:
+
+```df <- Groups_melt[!df$Position == "multiple",]```
+
+The following codes to create the files by spliting and writing table works well. Unfortunately, the coder forgot the remove the unecessary columns from the SNP Position dataset, we also don't want the files for positions "multiple" and "unknown". Colums can be removed with ```df$column == NULL``` and the "multiple" and "unknown" with the same code used to remove the "multiple" positions.
+
+## Part 2
+
+Since the 2 first plots are the number of SNPs loci on chromosomes, they are both identical. To plot the last graph, the ```melt``` command would have help to reoganize the data frame instead of creating a table of frequencies.
+
+The following answers are missing.
+
